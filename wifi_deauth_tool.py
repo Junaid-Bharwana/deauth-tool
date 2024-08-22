@@ -157,10 +157,13 @@ def main() -> None:
         elif choice == "6":
             interface_name = get_interface_name()
             if interface_name:
-                devices = get_connected_devices(interface_name)
-                print("Connected Devices:")
-                for i, device in enumerate(devices):
-                    print(f"{i+1}. {device}")
+                try:
+                    devices = get_connected_devices(interface_name)
+                    print("Connected Devices:")
+                    for i, device in enumerate(devices):
+                        print(f"{i+1}. {device}")
+                except subprocess.CalledProcessError as e:
+                    print(f"Error getting connected devices: {e}")
         elif choice == "7":
             mac = input("Enter device MAC address: ")
             deauth_specific_device(mac)
