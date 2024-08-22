@@ -121,21 +121,20 @@ def display_header() -> None:
     print("Owner: Junaid Bharwana")
     print("----------------")
 
-def main() -> None:
-    while True:
-        
-        print("1. Start airmon-ng")
-        print("2. Stop airmon-ng")
-        print("3. Get WiFi list")
-        print("4. Set channel")
-        print("5. Deauthenticate WiFi")
-        print("6. Get connected devices")
-        print("7. Deauthenticate specific device")
-        print("8. Deauthenticate multiple WiFi")
-        print("9. Exit")
+def display_features() -> None:
+    """Display the tool features"""
+    print("1. Start airmon-ng")
+    print("2. Stop airmon-ng")
+    print("3. Get WiFi list")
+    print("4. Set channel")
+    print("5. Deauthenticate WiFi")
+    print("6. Get connected devices")
+    print("7. Deauthenticate specific device")
+    print("8. Deauthenticate multiple WiFi")
+    print("9. Exit")
 
     
-        def main() -> None:
+       def main() -> None:
     while True:
         clear_screen()
         display_header()
@@ -156,7 +155,6 @@ def main() -> None:
         elif choice == "4":
             channel = input("Enter channel number: ")
             set_channel(channel)
-  
         elif choice == "5":
             mac = input("Enter WiFi MAC address: ")
             deauth_attack(mac)
