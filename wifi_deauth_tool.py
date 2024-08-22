@@ -17,7 +17,24 @@ def stop_airmon() -> None:
     except subprocess.CalledProcessError as e:
         print(f"Error stopping airmon-ng: {e}")
 
-def scan_wifi(interface_name: str) -> List[str]:
+def get_interface_name() -> str:
+    """Get the interface name"""
+    try:
+        output = subprocess.check_output(["airmon-ng"])
+        interface_name = None
+        for line in output.decode("utf-8").split("\n"):
+            if "wlan0" in line:
+                interface_name = line.split()[1]
+                break
+        if interface_name is None:
+            print("Failed to get interface name")
+            return ""
+        return interface_name
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting interface name: {e}")
+        return ""
+
+def scan_wifi(interface_name: str) -> list:
     """Scan for wireless networks and return a list of MAC addresses"""
     try:
         subprocess.run(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], timeout=None, check=True)
