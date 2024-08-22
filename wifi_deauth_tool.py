@@ -34,6 +34,12 @@ def scan_wifi(interface_name: str) -> List[str]:
     except KeyboardInterrupt:
         print("\nScan cancelled. Returning to menu...")
         return []
+    finally:
+        # Remove the scan-01.csv file to avoid clutter
+        try:
+            os.remove("scan-01.csv")
+        except FileNotFoundError:
+            pass
 
 def set_channel(channel: str) -> None:
     """Set the channel for the interface"""
