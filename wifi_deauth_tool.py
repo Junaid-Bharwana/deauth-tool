@@ -3,42 +3,6 @@ import subprocess
 import csv
 from typing import List
 
-
-
-def clear_screen() -> None:
-    """Clear the terminal screen"""
-    os.system('cls' if os.name == 'nt' else 'clear')
-
-def display_header() -> None:
-    """Display the tool header and owner information"""
-    print("WiFi Deauth Tool")
-    print("----------------")
-    print("Owner: Junaid Bharwana")
-    print("----------------")
-
-def display_features() -> None:
-    """Display the tool features"""
-    print("Features:")
-    print("1. Start airmon-ng")
-    print("2. Stop airmon-ng")
-    print("3. Get WiFi list")
-    print("4. Set channel")
-    print("5. Deauthenticate WiFi")
-    print("6. Get connected devices")
-    print("7. Deauthenticate specific device")
-    print("8. Deauthenticate multiple WiFi")
-    print("9. Exit")
-
-def main() -> None:
-    while True:
-        clear_screen()
-        display_header()
-        display_features()
-        choice = input("Enter your choice: ")
-        # ... (rest of your code remains the same)
-
-
-
 def start_airmon() -> None:
     """Start airmon-ng"""
     try:
@@ -146,21 +110,38 @@ def deauth_multiple_wifi(macs: List[str], interface_name: str) -> None:
         except subprocess.CalledProcessError as e:
             print(f"Error deauthenticating WiFi: {e}")
 
+def clear_screen() -> None:
+    """Clear the terminal screen"""
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+def display_header() -> None:
+    """Display the tool header and owner information"""
+    print("WiFi Deauth Tool")
+    print("----------------")
+    print("Owner: Junaid Bharwana")
+    print("----------------")
+
+def display_features() -> None:
+    """Display the tool features"""
+    print("Features:")
+    print("1. Start airmon-ng")
+    print("2. Stop airmon-ng")
+    print("3. Get WiFi list")
+    print("4. Set channel")
+    print("5. Deauthenticate WiFi")
+    print("6. Get connected devices")
+    print("7. Deauthenticate specific device")
+    print("8. Deauthenticate multiple WiFi")
+    print("9. Exit")
+
 def main() -> None:
     while True:
-        print("1. Start airmon-ng")
-        print("2. Stop airmon-ng")
-        print("3. Get WiFi list")
-        print("4. Set channel")
-        print("5. Deauthenticate WiFi")
-        print("6. Get connected devices")
-        print("7. Deauthenticate specific device")
-        print("8. Deauthenticate multiple WiFi")
-        print("9. Exit")
-        
+        clear_screen()
+        display_header()
+        display_features()
         choice = input("Enter your choice: ")
         
-        if choice == "1":
+       if choice == "1":
             start_airmon()
         elif choice == "2":
             stop_airmon()
