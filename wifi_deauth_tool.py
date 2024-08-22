@@ -133,8 +133,7 @@ def display_features() -> None:
     print("8. Deauthenticate multiple WiFi")
     print("9. Exit")
 
-    
-       def main() -> None:
+def main() -> None:
     while True:
         clear_screen()
         display_header()
