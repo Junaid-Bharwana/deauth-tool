@@ -34,8 +34,7 @@ def get_wifi_list():
 def set_channel(channel):
     subprocess.run(["iwconfig", "wlan0", "channel", channel])
 
-def deauth_attack():
-    mac_address = input("Enter WiFi MAC address: ")
+def deauth_attack(mac_address):
     # Get the current interface name
     output = subprocess.check_output(["airmon-ng"])
     interface_name = None
