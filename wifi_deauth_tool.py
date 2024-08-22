@@ -85,11 +85,21 @@ def deauth_attack(mac_address):
         print("\nDeauth attack cancelled. Returning to menu...")
 
 
-def get_connected_devices(interface_name: str = None) -> List[str]:
+
+def get_connected_devices(interface_name: str) -> List[dict]:
     """Get a list of connected devices"""
     try:
-        output = subprocess.check_output(["arp-scan", "-l"])
-        devices = [line.split()[0] for line in output.decode("utf-8").split("\n") if line]
+        output = subprocess.check_output(["airodump-ng", "--output-format", "csv", interface_name])
+        devices = []
+        for line in output.decode("utf-8").split("\n"):
+            columns = line.split(",")
+            if len(columns) > 3:
+                device = {
+                    "mac": columns[0].strip(),
+                    "ip": columns[5].strip(),
+                    "channel": columns[3].strip()
+                }
+                devices.append(device)
         return devices
     except subprocess.CalledProcessError as e:
         print(f"Error getting connected devices: {e}")
