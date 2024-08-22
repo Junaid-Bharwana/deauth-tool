@@ -8,11 +8,26 @@ def stop_airmon():
     subprocess.run(["airmon-ng", "stop", "wlan0"])
 
 def get_wifi_list():
-    output = subprocess.check_output(["iwlist", "wlan0", "scan"])
+    # Put wlan0 into monitor mode
+    start_airmon()
+    # Get the new interface name (e.g. wlan0mon)
+    output = subprocess.check_output(["airmon-ng"])
+    interface_name = None
+    for line in output.decode("utf-8").split("\n"):
+        if "wlan0" in line:
+            interface_name = line.split()[1]
+            break
+    if interface_name is None:
+        print("Failed to get interface name")
+        return []
+    # Scan for wireless networks
+    output = subprocess.check_output(["airodump-ng", "-w", interface_name, "--output-format", "csv"])
     wifi_list = []
     for line in output.decode("utf-8").split("\n"):
         if "ESSID" in line:
             wifi_list.append(line.split(":")[1].strip())
+    # Stop airmon-ng
+    stop_airmon()
     return wifi_list
 
 def set_channel(channel):
