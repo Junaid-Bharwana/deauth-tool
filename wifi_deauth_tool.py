@@ -85,7 +85,7 @@ def deauth_attack(mac_address):
         print("\nDeauth attack cancelled. Returning to menu...")
 
 
-def get_connected_devices() -> List[str]:
+def get_connected_devices(interface_name: str = None) -> List[str]:
     """Get a list of connected devices"""
     try:
         output = subprocess.check_output(["arp-scan", "-l"])
