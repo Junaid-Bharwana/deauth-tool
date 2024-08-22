@@ -143,10 +143,12 @@ def main() -> None:
             mac = input("Enter WiFi MAC address: ")
             deauth_attack(mac)
         elif choice == "6":
-            devices = get_connected_devices()
-            print("Connected Devices:")
-            for i, device in enumerate(devices):
-                print(f"{i+1}. {device}")
+    interface_name = get_interface_name()
+    if interface_name:
+        devices = get_connected_devices(interface_name)  # Pass interface_name as an argument
+        print("Connected Devices:")
+        for i, device in enumerate(devices):
+            print(f"{i+1}. {device}")
         elif choice == "7":
             mac = input("Enter device MAC address: ")
             deauth_specific_device(mac)
