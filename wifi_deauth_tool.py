@@ -92,7 +92,7 @@ def main():
             set_channel(channel)
         elif choice == "5":
             mac = input("Enter WiFi MAC address: ")
-            deauth_wifi(mac)
+            deauth_attack(mac)
         elif choice == "6":
             devices = get_connected_devices()
             print("Connected Devices:")
