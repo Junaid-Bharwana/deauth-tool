@@ -110,9 +110,6 @@ def deauth_multiple_wifi(macs: List[str], interface_name: str) -> None:
         except subprocess.CalledProcessError as e:
             print(f"Error deauthenticating WiFi: {e}")
 
-def clear_screen() -> None:
-    """Clear the terminal screen"""
-    os.system('cls' if os.name == 'nt' else 'clear')
 
 def display_header() -> None:
     """Display the tool header and owner information"""
@@ -135,7 +132,7 @@ def display_features() -> None:
 
 def main() -> None:
     while True:
-        clear_screen()
+        
         display_header()
         display_features()
         choice = input("Enter your choice: ")
