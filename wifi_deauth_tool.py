@@ -7,21 +7,29 @@ def start_airmon():
 def stop_airmon():
     subprocess.run(["airmon-ng", "stop", "wlan0mon"])
 
-def get_wifi_list(interface_name):
-    process = subprocess.Popen(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    try:
-        stdout, stderr = process.communicate(timeout=60)  # Set timeout to 60 seconds
-    except subprocess.TimeoutExpired:
-        process.kill()
-        print("airodump-ng timed out. Please try again.")
+def get_wifi_list():
+    # Put wlan0 into monitor mode
+    start_airmon()
+    # Get the new interface name (e.g. wlan0mon)
+    output = subprocess.check_output(["airmon-ng"])
+    interface_name = None
+    for line in output.decode("utf-8").split("\n"):
+        if "wlan0" in line:
+            interface_name = line.split()[1]
+            break
+    if interface_name is None:
+        print("Failed to get interface name")
         return []
-    else:
-        # Process the output
+    # Scan for wireless networks
+    subprocess.run(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], timeout=10)
+    # Read the CSV file
+    with open("scan-01.csv", "r") as f:
         wifi_list = []
-        for line in stdout.decode("utf-8").splitlines():
-            # Parse the line and add to wifi_list
-            pass
-        return wifi_list
+        for line in f.readlines()[1:]:  # Skip the header
+            wifi_list.append(line.split(",")[13].strip())
+    # Stop airmon-ng
+    stop_airmon()
+    return wifi_list
 
 def set_channel(channel):
     subprocess.run(["iwconfig", "wlan0mon", "channel", channel])
