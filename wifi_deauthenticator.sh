@@ -5,7 +5,7 @@ start_airmon_ng() {
 }
 
 stop_airmon_ng() {
-  airmon-ng stop wlan0
+  airmon-ng stop wlan0mon
 }
 
 deauthentication_menu() {
