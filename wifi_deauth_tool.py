@@ -121,24 +121,23 @@ def display_header() -> None:
     print("Owner: Junaid Bharwana")
     print("----------------")
 
-def display_features() -> None:
-    """Display the tool features"""
-    print("Features:")
-    print("1. Start airmon-ng")
-    print("2. Stop airmon-ng")
-    print("3. Get WiFi list")
-    print("4. Set channel")
-    print("5. Deauthenticate WiFi")
-    print("6. Get connected devices")
-    print("7. Deauthenticate specific device")
-    print("8. Deauthenticate multiple WiFi")
-    print("9. Exit")
-
 def main() -> None:
     while True:
         clear_screen()
         display_header()
         display_features()
+        
+        print("1. Start airmon-ng")
+        print("2. Stop airmon-ng")
+        print("3. Get WiFi list")
+        print("4. Set channel")
+        print("5. Deauthenticate WiFi")
+        print("6. Get connected devices")
+        print("7. Deauthenticate specific device")
+        print("8. Deauthenticate multiple WiFi")
+        print("9. Exit")
+
+    
         choice = input("Enter your choice: ")
         
        if choice == "1":
