@@ -123,9 +123,6 @@ def display_header() -> None:
 
 def main() -> None:
     while True:
-        clear_screen()
-        display_header()
-        display_features()
         
         print("1. Start airmon-ng")
         print("2. Stop airmon-ng")
@@ -138,9 +135,14 @@ def main() -> None:
         print("9. Exit")
 
     
+        def main() -> None:
+    while True:
+        clear_screen()
+        display_header()
+        display_features()
         choice = input("Enter your choice: ")
         
-       if choice == "1":
+        if choice == "1":
             start_airmon()
         elif choice == "2":
             stop_airmon()
