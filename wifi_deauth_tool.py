@@ -87,8 +87,10 @@ def main():
             for i, wifi in enumerate(wifi_list):
                 print(f"{i+1}. {wifi}")
         elif choice == "4":
-            channel = input("Enter channel number: ")
-            set_channel(channel)
+    global channel
+    channel = input("Enter channel number: ")
+    subprocess.run(["iwconfig", "wlan0mon", "channel", channel])
+    print("Channel set to", channel)
         elif choice == "5":
             mac = input("Enter WiFi MAC address: ")
             deauth_attack(mac)
