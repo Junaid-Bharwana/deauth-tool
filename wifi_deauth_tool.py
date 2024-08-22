@@ -32,7 +32,7 @@ def get_interface_name() -> str:
 def scan_wifi(interface_name: str) -> List[str]:
     """Scan for wireless networks and return a list of MAC addresses"""
     try:
-        subprocess.run(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], timeout=10, check=True)
+        subprocess.run(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], timeout=None, check=True)
         with open("scan-01.csv", "r") as f:
             reader = csv.reader(f)
             wifi_list = [row[13].strip() for row in reader][1:]  # Skip the header
