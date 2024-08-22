@@ -148,7 +148,7 @@ def main() -> None:
             devices = get_connected_devices(interface_name)
             print("Connected Devices:")
             for i, device in enumerate(devices):
-            print(f"{i+1}. {device}")
+                print(f"{i+1}. {device}")
         elif choice == "7":
             mac = input("Enter device MAC address: ")
             deauth_specific_device(mac)
