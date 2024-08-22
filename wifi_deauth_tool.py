@@ -142,7 +142,7 @@ def main() -> None:
         elif choice == "5":
             mac = input("Enter WiFi MAC address: ")
             deauth_attack(mac)
-       elif choice == "6":
+        elif choice == "6":
             devices = get_connected_devices()
             print("Connected Devices:")
             for i, device in enumerate(devices):
