@@ -35,21 +35,6 @@ def scan_wifi(interface_name: str) -> List[str]:
         print("\nScan cancelled. Returning to menu...")
         return []
 
-def scan_wifi(interface_name: str) -> List[str]:
-    """Scan for wireless networks and return a list of MAC addresses"""
-    try:
-        subprocess.run(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], timeout=None, check=True)
-        with open("scan-01.csv", "r") as f:
-            reader = csv.reader(f)
-            wifi_list = [row[13].strip() for row in reader][1:]  # Skip the header
-        return wifi_list
-    except subprocess.CalledProcessError as e:
-        print(f"Error scanning for WiFi: {e}")
-        return []
-    except FileNotFoundError:
-        print("Error: scan-01.csv file not found")
-        return []
-
 def set_channel(channel: str) -> None:
     """Set the channel for the interface"""
     try:
