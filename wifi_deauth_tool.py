@@ -5,7 +5,7 @@ def start_airmon():
     subprocess.run(["airmon-ng", "start", "wlan0"])
 
 def stop_airmon():
-    subprocess.run(["airmon-ng", "stop", "wlan0"])
+    subprocess.run(["airmon-ng", "stop", "wlan0mon"])
 
 def get_wifi_list():
     # Put wlan0 into monitor mode
@@ -21,11 +21,12 @@ def get_wifi_list():
         print("Failed to get interface name")
         return []
     # Scan for wireless networks
-    output = subprocess.check_output(["airodump-ng", "-w", interface_name, "--output-format", "csv"])
-    wifi_list = []
-    for line in output.decode("utf-8").split("\n"):
-        if "ESSID" in line:
-            wifi_list.append(line.split(":")[1].strip())
+    subprocess.run(["airodump-ng", "-w", "scan", "--output-format", "csv", interface_name], timeout=20)
+    # Read the CSV file
+    with open("scan-01.csv", "r") as f:
+        wifi_list = []
+        for line in f.readlines()[1:]:  # Skip the header
+            wifi_list.append(line.split(",")[13].strip())
     # Stop airmon-ng
     stop_airmon()
     return wifi_list
